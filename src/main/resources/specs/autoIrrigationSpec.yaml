@@ -1,0 +1,329 @@
+openapi: 3.0.1
+info:
+    title: Automatic Irrigation API
+    description: >-
+        Automatic Irrigation API
+    contact:
+        name: Christian Oliver
+    version: v1
+paths:
+    '/irrigation/plot/list':
+        get:
+            tags:
+                - IrrigationAPI
+            summary: 'Get all plots.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: getAllPlots
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Plot'
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/plot/create':
+        post:
+            tags:
+                - IrrigationAPI
+            summary: 'Add a new plot of land for irrigation.'
+            description: 'In success case, Http Code 201 will be returned.'
+            operationId: addPlot
+            requestBody:
+                description: Irrigation Plot to Add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Plot'
+            responses:
+                '201':
+                    description: Plot successfully created
+                    content: { }
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/plot/update/id/{id}/name/{name}':
+        put:
+            tags:
+                - IrrigationAPI
+            summary: 'Change the plot details such as name and irrigation interval.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: updatePlot
+            parameters:
+                -   name: id
+                    description: The id of the plot to update
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+                -   name: name
+                    description: The new name for the plot
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                                format: int64
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/slot/id/{plotId}/list':
+        get:
+            tags:
+                - IrrigationAPI
+            summary: 'Get all time slot for a specified plot id.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: getAllSlotsForPlot
+            parameters:
+                -   name: plotId
+                    description: The id of the plot to whose time slots we want to query
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Slot'
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/slot/create':
+        post:
+            tags:
+                - IrrigationAPI
+            summary: 'Add a new time slot for the specified plot id.'
+            description: 'In success case, Http Code 201 will be returned.'
+            operationId: addSlot
+            requestBody:
+                description: Irrigation Plot to Add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Slot'
+            responses:
+                '201':
+                    description: Time slot successfully created
+                    content: { }
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/slot/configure/id/{id}':
+        put:
+            tags:
+                - IrrigationAPI
+            summary: 'Configure the irrigation plan for a plot and time slot.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: configureSlot
+            requestBody:
+                description: Configuration details for time slot
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Slot'
+            parameters:
+                -   name: id
+                    description: The id of the slot to configure
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                                format: int64
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/slot/delete/id/{id}':
+        delete:
+            tags:
+                - IrrigationAPI
+            summary: 'Remove a time slot.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: removeSlot
+            parameters:
+                -   name: id
+                    description: The id of the slot to delete
+                    in: path
+                    required: true
+                    schema:
+                        type: integer
+                        format: int64
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                                format: int64
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+    '/irrigation/request':
+        post:
+            tags:
+                - IrrigationAPI
+            summary: 'Request for a plot to be irrigated at the clocking of a time slot.'
+            description: 'In success case, Http Code 200 will be returned.'
+            operationId: requestIrrigation
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                                format: int32
+                '400':
+                    description: Bad request
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+                '500':
+                    description: Internal server error
+                    content:
+                        '*/*':
+                            schema:
+                                $ref: 'common.yaml#/components/schemas/ApiError'
+components:
+    schemas:
+        Plot:
+            type: object
+            required:
+                - name
+            properties:
+                soilMoistureLevel:
+                    type: number
+                    description: Percentage of water present in the soil
+                name:
+                    type: string
+                    description: The name of this plot (e.g. rice plot)
+        Slot:
+            type: object
+            required:
+                - period
+                - amountOfWater
+                - plotId
+            properties:
+                period:
+                    type: integer
+                    format: int32
+                    description: The time (in hour) to trigger irrigation of the plot
+                amountOfWater:
+                    type: integer
+                    format: int32
+                    description: The amount of water required to irrigate the plot for during this period
+                plotId:
+                    type: integer
+                    format: int64
+                    description: The id of the plot that owns this time slot
+        irrigationRequest:
+            type: object
+            required:
+                - amountOfWater
+                - plotId
+                - slotId
+            properties:
+                amountOfWater:
+                    type: integer
+                    format: int32
+                    description: The amount of water required to irrigate the plot for during this period
+                plotId:
+                    type: integer
+                    format: int64
+                    description: The id of the plot to be irrigated
+                slotId:
+                    type: integer
+                    format: int64
+                    description: The id of the time slot whom this irrigation request is meant for
